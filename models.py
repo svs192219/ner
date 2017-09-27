@@ -289,6 +289,10 @@ def compute_log_marginals(sentence, tag_indexer, sentence_feature_cache, feature
         for tag_idx in xrange(0, len(tag_indexer)):
             log_alpha[word_idx][tag_idx] = -np.inf
             for prev_tag_idx in xrange(0, len(tag_indexer)):
+                curr_tag = tag_indexer.get_object(tag_idx)
+                prev_tag = tag_indexer.get_object(prev_tag_idx)
+                if isI(curr_tag) and get_tag_label(curr_tag) != get_tag_label(prev_tag):
+                    continue
                 log_alpha[word_idx][tag_idx] = np.logaddexp(log_alpha[word_idx][tag_idx], \
                                                             log_alpha[word_idx - 1][prev_tag_idx] + \
                                                         score_indexed_features(sentence_feature_cache[word_idx][tag_idx], feature_weights))
@@ -301,6 +305,10 @@ def compute_log_marginals(sentence, tag_indexer, sentence_feature_cache, feature
         for tag_idx in range(0, len(tag_indexer)):
             log_beta[word_idx][tag_idx] = -np.inf
             for next_tag_idx in range(0, len(tag_indexer)):
+                curr_tag = tag_indexer.get_object(tag_idx)
+                next_tag = tag_indexer.get_object(next_tag_idx)
+                if isI(next_tag) and get_tag_label(curr_tag) != get_tag_label(next_tag):
+                    continue
                 log_beta[word_idx][tag_idx] = np.logaddexp(log_beta[word_idx][tag_idx], \
                                                         log_beta[word_idx + 1][next_tag_idx] + \
                                                         score_indexed_features(sentence_feature_cache[word_idx][next_tag_idx], feature_weights))
