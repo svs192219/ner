@@ -359,6 +359,8 @@ def extract_emission_features(sentence, word_index, tag, feature_indexer, add_to
         maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":EndNgram=" + end_ngram)
     # Look at a few word shape features
     maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":IsCap=" + repr(curr_word[0].isupper()))
+    maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":IsAllCap=" + repr(curr_word.isupper()))
+    maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":dashExists=" + repr("-" in curr_word))
     # Compute word shape
     new_word = []
     for i in xrange(0, len(curr_word)):
