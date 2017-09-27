@@ -39,6 +39,7 @@ if __name__ == '__main__':
     parser.add_argument('--outW', dest='outW', type=str, default='')
     parser.add_argument('-e', '--epochs', dest='epochs', type=int, default=10)
     parser.add_argument('-l', '--language', dest='lang', type=str, default='eng')
+    parser.add_argument('-lr', '--lr', dest='lr', type=float, default=0.1)
     args = parser.parse_args()
 
     # Load the training and test data
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         hmm_model = train_hmm_model(train)
         dev_decoded = [hmm_model.decode(test_ex) for test_ex in dev]
     elif system_to_run == "CRF":
-        crf_model = train_crf_model(train, args.epochs, weights_file=args.preW, output_weights=args.outW)
+        crf_model = train_crf_model(train, args.epochs, args.lr, weights_file=args.preW, output_weights=args.outW)
         dev_decoded = [crf_model.decode(test_ex) for test_ex in dev]
         if run_on_test:
             test = read_data("data/eng.testb.blind")

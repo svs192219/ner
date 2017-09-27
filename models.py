@@ -227,7 +227,7 @@ class CrfNerModel(object):
         return LabeledSentence(sentence.tokens, chunks_from_bio_tag_seq(pred_tags))
 
 # Trains a CrfNerModel on the given corpus of sentences.
-def train_crf_model(sentences, epochs, weights_file="", output_weights=""):
+def train_crf_model(sentences, epochs, lr, weights_file="", output_weights=""):
     tag_indexer = Indexer()
     for sentence in sentences:
         for tag in sentence.get_bio_tags():
@@ -256,7 +256,6 @@ def train_crf_model(sentences, epochs, weights_file="", output_weights=""):
     print("Initital Statistics")
     model = CrfNerModel(tag_indexer, feature_indexer, feature_weights)
     # TODO : currently using only emission features, also extend to transition features if possible
-    learning_rate = 0.1
     batch_size = 1
     # training loop
     for epoch in range(0, epochs):
@@ -275,7 +274,7 @@ def train_crf_model(sentences, epochs, weights_file="", output_weights=""):
                 gradient.increment_all(feature_cache[sentence_idx][word_idx][gold_tag_idx], 1.0)
             if (sentence_idx+1) % batch_size == 0:
                 for weight_idx in gradient.keys():
-                    model.feature_weights[weight_idx] += (learning_rate * gradient.get_count(weight_idx))/batch_size
+                    model.feature_weights[weight_idx] += (lr * gradient.get_count(weight_idx))/batch_size
                 gradient = Counter()
     np.save(output_weights, model.feature_weights)
     return model
